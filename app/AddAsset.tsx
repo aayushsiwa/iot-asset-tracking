@@ -26,11 +26,11 @@ const AddAsset = ({ onAdd }: { onAdd: (data: any) => void }) => {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex justify-between gap-x-2">
+            <div className="flex justify-center gap-x-2 w-full">
                 <input
                     required
                     type="text"
-                    className="border p-2 mb-2 bg-black w-[33%]"
+                    className="border p-2 mb-2 bg-black w-[30%] md:w-[33%]"
                     placeholder="Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -38,7 +38,7 @@ const AddAsset = ({ onAdd }: { onAdd: (data: any) => void }) => {
 
                 <select
                     required
-                    className="border p-2 mb-2 bg-black text-gray-400 w-[33%]"
+                    className="border p-2 mb-2 bg-black text-gray-400 w-[30%] md:w-[33%]"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                 >
@@ -49,7 +49,7 @@ const AddAsset = ({ onAdd }: { onAdd: (data: any) => void }) => {
                 </select>
                 <select
                     required
-                    className="border p-2 mb-2 bg-black text-gray-400 w-[33%]"
+                    className="border p-2 mb-2 bg-black text-gray-400 w-[30%] md:w-[33%]"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     disabled={
@@ -68,12 +68,14 @@ const AddAsset = ({ onAdd }: { onAdd: (data: any) => void }) => {
                     <option value="Maintenance">Maintenance</option>
                 </select>
             </div>
-            <button
-                className="bg-black border-2 text-white p-2 rounded hover:bg-zinc-700"
-                onClick={handleAddAsset}
-            >
-                Add Asset
-            </button>
+            <div className="flex justify-center items-center">
+                <button
+                    className="bg-black border-2 text-white p-2 rounded hover:bg-zinc-700 w-96 md:w-full"
+                    onClick={handleAddAsset}
+                >
+                    Add Asset
+                </button>
+            </div>
             {showToast && (
                 <Toast
                     message="Please fill in all required fields."

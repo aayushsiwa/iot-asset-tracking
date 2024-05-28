@@ -15,11 +15,11 @@ const Toast: React.FC<ToastProps> = ({
 }) => {
     useEffect(() => {
         const toastElement = document.createElement("div");
-        toastElement.className = `${bgColor} ${textColor} py-2 px-4 rounded`;
+        toastElement.className = `${bgColor} ${textColor} py-2 px-4 rounded opacity-50 shadow-md transition ease-in-out`;
         toastElement.textContent = message;
         toastElement.style.position = "fixed";
-        toastElement.style.bottom = "20px";
-        toastElement.style.left = "20px";
+        toastElement.style.top = "6rem";
+        toastElement.style.right = "1rem";
         toastElement.style.zIndex = "9999";
         document.body.appendChild(toastElement);
         setTimeout(() => {
