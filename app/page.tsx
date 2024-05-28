@@ -22,6 +22,7 @@ const Home = () => {
             if (error) {
                 throw error;
             }
+			data?.reverse();
             setAssets(data || []);
         } catch (error) {
             console.error("Error fetching assets:", error.message);
@@ -44,12 +45,36 @@ const Home = () => {
                     break;
             }
 
+            const { data: existingAsset, error: fetchError } = await supabase
+                .from("assets")
+                .select()
+                .eq("name", name)
+                .single();
+
+            if (fetchError) {
+                console.error("Error fetching asset:", fetchError?.message);
+            }
+
+            if (existingAsset) {
+                // Delete the existing asset
+                const { error: deleteError } = await supabase
+                    .from("assets")
+                    .delete()
+                    .eq("assetId", existingAsset.assetId);
+
+                if (deleteError) {
+                    // throw deleteError;
+					console.error("Error deleting asset:", deleteError?.message);
+                }
+            }
+
             const { error } = await supabase.from("assets").insert([
                 {
                     name,
                     status,
                     location: locationToSet,
-                    lastUpdated: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString().substring(11,19) 
+					// + " " + new Date().toISOString().substring(0,10),
                 },
             ]);
             if (error) {
@@ -105,18 +130,20 @@ const Home = () => {
                     <option value="Maintenance">Maintenance</option>
                 </select>
                 <button
-                    className="bg-black border-2 text-white px-4 py-2 rounded"
+                    className="bg-black border-2 text-white px-4 rounded hover:bg-zinc-700"
                     onClick={handleAddAsset}
                 >
                     Add Asset
                 </button>
             </div>
+			<h2 className="text-xl font-semibold">Asset Info</h2>
             <div className="grid grid-cols-3 gap-4">
                 {assets.map((asset, index) => (
                     <div key={index} className="border p-4 rounded-md">
                         <h2 className="text-xl font-semibold">{asset.name}</h2>
                         <p>Status: {asset.status}</p>
                         <p>Location: {asset.location}</p>
+                        <p>Last Updated at: {asset.lastUpdated}</p>
                     </div>
                 ))}
             </div>
