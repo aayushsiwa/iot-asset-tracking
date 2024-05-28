@@ -19,9 +19,9 @@ export default function RootLayout({
     const router = useRouter();
     const [path, setPath] = useState("");
 
-    useEffect(() => {
-        setPath(router.asPath);
-    }, [router.asPath]);
+    // useEffect(() => {
+    //     setPath(router.pathname);
+    // }, [router.pathname]);
 
     return (
         <>
