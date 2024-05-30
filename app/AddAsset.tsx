@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Toast from "./Toast";
+import Toast from "../components/Toast";
 
 const AddAsset = ({ onAdd }: { onAdd: (data: any) => void }) => {
     const [name, setName] = useState("");

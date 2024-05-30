@@ -31,3 +31,51 @@ body {
     text-wrap: balance;
   }
 }
+
+
+/* Hide the default scrollbar
+::-webkit-scrollbar {
+  display: none;
+} */
+
+/* Show only horizontal scrollbar */
+::-webkit-scrollbar {
+  height: 10px;
+}
+
+/* Show only vertical scrollbar */
+::-webkit-scrollbar {
+  width:5px;
+}
+
+/* Change the color of the scrollbar */
+::-webkit-scrollbar {
+  background-color: #000000;
+}
+
+/* Change the color of the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #3b3b3b;
+}
+
+/* Change the color of the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+
+@keyframes blink {
+  0% {
+      background-color: transparent;
+  }
+  50% {
+      background-color: #ffffff25; /* Change color as needed */
+  }
+  100% {
+      background-color: transparent;
+  }
+}
+
+.blink {
+  animation: blink 1s infinite;
+}

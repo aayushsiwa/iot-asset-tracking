@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "../lib/helper/supabaseClient";
+import { Rows2 } from "../lib/helper/rows";
 
 interface ArchivedItem {
     id: number;
@@ -10,12 +11,9 @@ interface ArchivedItem {
     createdAt: string;
 }
 
-const supUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const anonKey: string = process.env.NEXT_PUBLIC_SUPABASE_KEY || "";
-const supabase = createClient(supUrl, anonKey);
-
 const Archive: React.FC = () => {
     const [archivedData, setArchivedData] = useState<ArchivedItem[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         // Fetch archived data from the backend when component mounts
@@ -23,36 +21,60 @@ const Archive: React.FC = () => {
     }, []);
 
     const fetchArchivedData = async () => {
+        setLoading(true);
+
         try {
             const { data, error } = await supabase.from("archive").select();
             if (error) {
                 throw error;
             }
             data?.reverse();
+            console.log(data);
             setArchivedData(data || []);
-        } catch (error:any) {
+        } catch (error: any) {
             console.error("Error fetching archived data:", error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="container flex flex-col mx-auto gap-y-10 justify-center items-center">
-            <h1 className="text-3xl font-bold mt-8 mb-4">Archives</h1>
-            <div className="">
-                <table className="table-fixed w-96 ">
-                    <thead >
-                        <tr className="flex gap-1">
-                            <th className="w-48 border-2 border-gray-400">Name</th>
-                            <th className="w-48 border-2 border-gray-400">Archived At</th>
+        <div className="container mx-auto font-mono">
+            <h1 className="text-3xl font-bold mt-8 mb-16">Inventory</h1>
+            <div className="flex justify-center">
+                <table className="table-fixed w-full border-collapse border-white border-b-2">
+                    <thead className="sticky top-0 z-10">
+                        <tr className="flex bg-black text-white border-b-2 border-slate-700">
+                            <th className="w-1/2 p-2">Name</th>
+                            <th className="w-1/2 p-2">Status Changed At</th>
                         </tr>
                     </thead>
-                    <tbody className="">
-                        {archivedData.map((item) => (
-                            <tr key={item.name} className="flex justify-center items-center mt-1 gap-1">
-                                <td className="flex w-48 justify-center border-2 border-red-900 items-center">{item.name}</td>
-                                <td className="flex w-48 justify-center border-2 border-red-900 items-center">{item.createdAt.split("T")[1].substring(0,8)+" "+item.createdAt.split("T")[0]}</td>
-                            </tr>
-                        ))}
+                    <tbody>
+                        {loading ? (
+                            <Rows2 />
+                        ) : archivedData.length > 0 ? (
+                            archivedData.map((item) => (
+                                <tr
+                                    key={item.name}
+                                    className="flex justify-center items-center p-2 border-b-2 border-slate-700"
+                                >
+                                    <td className="w-1/2 flex justify-center items-center">
+                                        {item.name}
+                                    </td>
+                                    <td className="w-1/2 flex justify-center items-center">
+                                        {new Date(
+                                            item.createdAt
+                                        ).toLocaleString()}
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <div className="flex justify-center items-center">
+                                <h2 className="text-xl ms-[5vw] mt-[7vh]">
+                                    No Archives found
+                                </h2>
+                            </div>
+                        )}
                     </tbody>
                 </table>
             </div>

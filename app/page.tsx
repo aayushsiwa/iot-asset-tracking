@@ -3,20 +3,19 @@ import React, { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import AddAsset from "./AddAsset";
 import Link from "next/link";
-
-const supUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const anonKey: string = process.env.NEXT_PUBLIC_SUPABASE_KEY || "";
-const supabase = createClient(supUrl, anonKey);
+import { supabase } from "./lib/helper/supabaseClient";
 
 const Home = () => {
     const [assets, setAssets] = useState<any[]>([]);
     const [status, setStatus] = useState<string>("All"); // Adding status state
+    const [loading, setLoading] = useState<boolean>(true); // Adding loading state
 
     useEffect(() => {
         fetchAssets();
     }, []);
 
     const fetchAssets = async () => {
+        setLoading(true); // Set loading to true while fetching assets
         try {
             let { data, error } = await supabase.from("assets").select();
             if (error) {
@@ -24,8 +23,10 @@ const Home = () => {
             }
             data?.reverse();
             setAssets(data || []);
-        } catch (error: any) { // Explicitly type 'error' as 'any'
+        } catch (error: any) {
             console.error("Error fetching assets:", error.message);
+        } finally {
+            setLoading(false); // Set loading to false after fetching assets
         }
     };
 
@@ -106,13 +107,14 @@ const Home = () => {
                 throw error;
             }
             fetchAssets();
-        } catch (error:any) {
+        } catch (error: any) {
             console.error("Error adding asset:", error.message);
         }
     };
 
     // Function to filter assets based on status
     const handleStatusFilterChange = async (selectedStatus: string) => {
+        setLoading(true); // Set loading to true when applying filter
         try {
             let { data, error } = await supabase.from("assets").select();
 
@@ -128,16 +130,15 @@ const Home = () => {
                 throw error;
             }
             setAssets(data || []);
-        } catch (error:any) {
+        } catch (error: any) {
             console.error("Error filtering assets by status:", error.message);
+        } finally {
+            setLoading(false); // Set loading to false after applying filter
         }
     };
 
     return (
         <div className="container flex flex-col mx-auto gap-y-10 justify-center lg:justify-normal items-center lg:items-stretch">
-            {/* <Link href="/archive">
-                <button>View Archives</button>
-            </Link> */}
             <h1 className="text-3xl font-bold mt-8 mb-4">
                 Asset Tracking Dashboard
             </h1>
@@ -157,8 +158,23 @@ const Home = () => {
                 <option value="Available">Available</option>
                 <option value="Maintenance">Maintenance</option>
             </select>
-            <div className="grid grid-cols-2 gap-4 px-2 md:grid-cols-4">
-                {assets.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4 px-2 md:grid-cols-4 font-mono">
+                {loading ? (
+                    // Display "Loading" while fetching assets
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-1">
+                        <div className="border p-4 rounded-2xl blink">
+                            <div className="blur-md">
+                                <h2 className="text-xl font-semibold">
+                                    Loading
+                                </h2>
+                                <p>Status: Loading</p>
+                                <p>Location: Loading</p>
+                                <p>Last Updated at:06:22:22 2024-05-28</p>
+                            </div>
+                        </div>
+                    </div>
+                ) : assets.length > 0 ? (
+                    // Display assets if available
                     assets.map((asset, index) => (
                         <div key={index} className="border p-4 rounded-2xl">
                             <h2 className="text-xl font-semibold">
@@ -166,12 +182,15 @@ const Home = () => {
                             </h2>
                             <p>Status: {asset.status}</p>
                             <p>Location: {asset.location}</p>
-                            <p>Last Updated at: {asset.lastUpdated}</p>
+                            <p>Last Updated at:{asset.lastUpdated}</p>
                         </div>
                     ))
                 ) : (
-                    <div>
-                        <h2 className="text-2xl">No assets found</h2>
+                    // Display "No assets" if no assets available
+                    <div className="border rounded-2xl lg:h-[18vh] h-[25vh]">
+                        <h2 className="text-xl ms-[5vw] mt-[7vh]">
+                            No assets found
+                        </h2>
                     </div>
                 )}
             </div>
