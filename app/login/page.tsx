@@ -1,45 +1,123 @@
-"use client";
-import React from "react";
+import Link from "next/link";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { SubmitButton } from "./submit-button";
 import { supabase } from "../lib/helper/supabaseClient";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 
-function page() {
-    const loginGitHub = async () => {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider:"github",
+export default function Login({
+    searchParams,
+}: {
+    searchParams: { message: string };
+}) {
+    const signIn = async (formData: FormData) => {
+        "use server";
+
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        if (error) {
+            return redirect("/login?message=Could not authenticate user");
+        }
+
+        return redirect("/protected");
+    };
+
+    const signUp = async (formData: FormData) => {
+        "use server";
+
+        const origin = headers().get("origin");
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
             options: {
-                redirectTo: `../auth/callback`,
+                emailRedirectTo: `${origin}/auth/callback`,
             },
         });
+
+        if (error) {
+            return redirect(
+                `/login?message=Could not authenticate user${error}`
+            );
+        }
+
+        return redirect(
+            "/login?message=Check email to continue sign in process"
+        );
     };
-    // async function signOut() {
-    //     const { error } = await supabase.auth.signOut();
-    // }
 
     return (
-        <>
-            <button className="border-2 hover:bg-zinc-700" onClick={loginGitHub}>
-                Login with github
-            </button>
-            {/* <Auth
-                supabaseClient={supabase}
-                appearance={{ theme: ThemeSupa }}
-                providers={["github"]}
-                localization={{
-                    variables: {
-                        sign_in: {
-                            email_label: "Your email address",
-                            password_label: "Your strong password",
-                        },
-                        sign_up: {
-                            email_label: "Your email address",
-                        },
-                    },
-                }}
-            /> */}
-        </>
+        <div className="flex flex-col items-center min-h-[80vh]">
+            <div className="w-96 flex flex-col justify-center items-center mx-auto flex-1">
+                <Link
+                    href="/"
+                    className="absolute left-4 top-20 py-2 px-4 rounded-md no-underline text-foreground bg-slate-800 hover:bg-slate-700 flex items-center group text-sm"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+                    >
+                        <polyline points="15 18 9 12 15 6" />
+                    </svg>{" "}
+                    Back
+                </Link>
+
+                <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
+                    <label className="text-md" htmlFor="email">
+                        Email
+                    </label>
+                    <input
+                        className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                        name="email"
+                        placeholder="you@example.com"
+                        required
+                    />
+                    <label className="text-md" htmlFor="password">
+                        Password
+                    </label>
+                    <input
+                        className="rounded-md px-4 py-2 bg-inherit border mb-6"
+                        type="password"
+                        name="password"
+                        placeholder="••••••••"
+                        required
+                    />
+                    <SubmitButton
+                        formAction={signIn}
+                        className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
+                        pendingText="Signing In..."
+                    >
+                        Sign In
+                    </SubmitButton>
+                    <SubmitButton
+                        formAction={signUp}
+                        className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+                        pendingText="Signing Up..."
+                    >
+                        Sign Up
+                    </SubmitButton>
+                    {searchParams?.message && (
+                        <p className="mt-4 p-4 bg-slate-700 text-white text-center rounded">
+                            {searchParams.message}
+                        </p>
+                    )}
+                </form>
+            </div>
+        </div>
     );
 }
-
-export default page;
