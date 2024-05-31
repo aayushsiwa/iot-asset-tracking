@@ -1,7 +1,8 @@
+'use client'
 import React, { useState } from "react";
 import Toast from "../components/Toast";
 
-const AddAsset = ({ onAdd }: { onAdd: (data: any) => void }) => {
+const AddAsset = ({ onAdd, inventory }: { onAdd: (data: any) => void; inventory: any[] }) => {
     const [name, setName] = useState("");
     const [status, setStatus] = useState("");
     const [location, setLocation] = useState("");
@@ -27,14 +28,19 @@ const AddAsset = ({ onAdd }: { onAdd: (data: any) => void }) => {
     return (
         <div className="flex flex-col gap-2">
             <div className="flex justify-center gap-x-2 w-full">
-                <input
+                <select
                     required
-                    type="text"
-                    className="border p-2 mb-2 bg-black w-[30%] md:w-[33%]"
-                    placeholder="Name"
+                    className="border p-2 mb-2 bg-black text-gray-400 w-[30%] md:w-[33%]"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                />
+                >
+                    <option value="">Select Name</option>
+                    {inventory.map((item) => (
+                        <option key={item.name} value={item.name}>
+                            {item.name}
+                        </option>
+                    ))}
+                </select>
 
                 <select
                     required

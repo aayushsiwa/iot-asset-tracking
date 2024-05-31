@@ -1,21 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
 import AddAsset from "./AddAsset";
-import Link from "next/link";
 import { supabase } from "./lib/helper/supabaseClient";
 
 const Home = () => {
     const [assets, setAssets] = useState<any[]>([]);
-    const [status, setStatus] = useState<string>("All"); // Adding status state
-    const [loading, setLoading] = useState<boolean>(true); // Adding loading state
+    const [status, setStatus] = useState<string>("All");
+    const [loading, setLoading] = useState<boolean>(true);
+    const [inventory, setInventory] = useState<any[]>([]); // State to store inventory data
 
     useEffect(() => {
         fetchAssets();
+        fetchInventory(); // Fetch inventory data
     }, []);
 
     const fetchAssets = async () => {
-        setLoading(true); // Set loading to true while fetching assets
+        setLoading(true);
         try {
             let { data, error } = await supabase.from("assets").select();
             if (error) {
@@ -26,7 +26,24 @@ const Home = () => {
         } catch (error: any) {
             console.error("Error fetching assets:", error.message);
         } finally {
-            setLoading(false); // Set loading to false after fetching assets
+            setLoading(false);
+        }
+    };
+
+    const fetchInventory = async () => {
+        try {
+            let { data, error } = await supabase.from("inventory").select();
+            if (error) {
+                throw error;
+            }
+            data?.sort((a, b) => {
+                if (a.name < b.name) return -1;
+                if (a.name > b.name) return 1;
+                return 0;
+            });
+            setInventory(data || []);
+        } catch (error: any) {
+            console.error("Error fetching inventory:", error.message);
         }
     };
 
@@ -114,7 +131,7 @@ const Home = () => {
 
     // Function to filter assets based on status
     const handleStatusFilterChange = async (selectedStatus: string) => {
-        setLoading(true); // Set loading to true when applying filter
+        setLoading(true);
         try {
             let { data, error } = await supabase.from("assets").select();
 
@@ -133,7 +150,7 @@ const Home = () => {
         } catch (error: any) {
             console.error("Error filtering assets by status:", error.message);
         } finally {
-            setLoading(false); // Set loading to false after applying filter
+            setLoading(false);
         }
     };
 
@@ -143,7 +160,8 @@ const Home = () => {
                 Asset Tracking Dashboard
             </h1>
             <h2 className="text-xl font-semibold">Add Asset</h2>
-            <AddAsset onAdd={handleAddAsset} />
+            <AddAsset onAdd={handleAddAsset} inventory={inventory} />{" "}
+            {/* Pass inventory data as props */}
             <h2 className="text-xl font-semibold">Asset Info</h2>
             <select
                 className="border p-2 mb-2 bg-black text-gray-400 w-96 md:w-full"
