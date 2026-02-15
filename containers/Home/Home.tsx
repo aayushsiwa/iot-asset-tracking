@@ -68,9 +68,15 @@ const HomeContainer = () => {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-48 p-2 rounded-lg border bg-transparent"
         >
-          <option value="All">All</option>
-          <option value="online">Online</option>
-          <option value="offline">Offline</option>
+          <option value="All" className="dark:bg-black">
+            All
+          </option>
+          <option value="online" className="dark:bg-black">
+            Online
+          </option>
+          <option value="offline" className="dark:bg-black">
+            Offline
+          </option>
         </select>
       </div>
 
