@@ -51,8 +51,12 @@ const AddAsset: React.FC<Props> = ({ locations, onCreated }) => {
               value={status}
               onChange={(e) => setStatus(e.target.value as AssetStatus)}
             >
-              <option value={AssetStatus.Online}>Online</option>
-              <option value={AssetStatus.Offline}>Offline</option>
+              <option value={AssetStatus.Online} className="dark:bg-black">
+                Online
+              </option>
+              <option value={AssetStatus.Offline} className="dark:bg-black">
+                Offline
+              </option>
             </select>
 
             <select
@@ -60,9 +64,11 @@ const AddAsset: React.FC<Props> = ({ locations, onCreated }) => {
               value={locationId}
               onChange={(e) => setLocationId(e.target.value)}
             >
-              <option value="">Select Location</option>
+              <option value="" className="dark:bg-black">
+                Select Location
+              </option>
               {locations.map((loc) => (
-                <option key={loc.ID} value={loc.ID}>
+                <option key={loc.ID} value={loc.ID} className="dark:bg-black">
                   {loc.name}
                 </option>
               ))}

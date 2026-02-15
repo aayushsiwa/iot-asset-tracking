@@ -67,8 +67,12 @@ const EditAsset: React.FC<Props> = ({ asset, locations, onUpdated }) => {
               value={status}
               onChange={(e) => setStatus(e.target.value as AssetStatus)}
             >
-              <option value="online">Online</option>
-              <option value="offline">Offline</option>
+              <option value="online" className="dark:bg-black">
+                Online
+              </option>
+              <option value="offline" className="dark:bg-black">
+                Offline
+              </option>
             </select>
 
             <select
@@ -77,7 +81,7 @@ const EditAsset: React.FC<Props> = ({ asset, locations, onUpdated }) => {
               onChange={(e) => setLocationId(e.target.value)}
             >
               {locations.map((loc) => (
-                <option key={loc.ID} value={loc.ID}>
+                <option key={loc.ID} value={loc.ID} className="dark:bg-black">
                   {loc.name}
                 </option>
               ))}
