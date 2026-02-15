@@ -1,36 +1,213 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# IoT Asset Tracking
 
-## Getting Started
+## Overview
 
-First, run the development server:
+**IoT Asset Tracking** is a web-based inventory management system designed to monitor physical IoT devices and hardware assets across multiple locations such as workshops, warehouses, and labs.
+
+The system allows organizations to track asset availability, status (online/offline), and location using a modern full-stack architecture powered by Next.js and Supabase.
+
+This product focuses on clean UI, secure access control, and scalable database design for real-world hardware tracking use cases.
+
+## Features
+
+### 🔐 Authentication & Authorization
+
+- Supabase Auth integration
+- Public read access
+- Restricted create/update/delete for authenticated users
+- Row-Level Security (RLS) enabled
+
+### 📦 Asset Management
+
+- Create, update, and delete assets
+- Assign assets to specific locations
+- Track asset status (Online / Offline)
+- UUID-based asset identification
+- Search by name
+- Search by UUID using `#` prefix (e.g., `#9767`)
+- Status-based filtering
+- Responsive grid and table views
+
+### 📍 Location Management
+
+- Create and manage asset locations
+- Location codes (e.g., WSHA, WHSA)
+- Assign multiple assets to a location
+- Structured table view for management
+
+### 📊 Dashboard & Analytics
+
+- Asset statistics summary
+- Online / Offline counts
+- Dynamic filtering
+- Clean visual indicators using Tailwind styles
+
+### 🧠 Smart UI Features
+
+- Dark mode support
+- Responsive layout
+- Reusable components
+- React Query for optimized API calls
+- Optimistic UI updates
+- Clean separation of hooks and UI logic
+
+## Example Use Cases
+
+This system can be used to track:
+
+- Arduino Boards
+- Raspberry Pi Devices
+- Industrial PCs
+- PLC Controllers
+- Network Switches
+- Oscilloscopes
+- 3D Printers
+- Power Supplies
+- Sensor Modules
+
+Across locations such as:
+
+- Workshop A / B
+- Warehouse A / B
+- Electronics Lab
+- Testing Room
+
+## Tech Stack
+
+### Frontend
+
+- **Next.js (App Router)**
+- **React (TypeScript)**
+- **TailwindCSS**
+- **Shadcn UI**
+- **TanStack React Query**
+
+### Backend / Database
+
+- **Supabase**
+  - PostgreSQL
+  - Supabase Auth
+  - Row Level Security (RLS)
+
+- REST APIs via Next.js Route Handlers
+
+### Database Design
+
+Tables:
+
+- `assets`
+- `locations`
+
+Key Fields:
+
+**Assets**
+
+- ID (UUID)
+- name
+- status (online/offline)
+- locationID (FK)
+- createdAtUTC
+- updatedAtUTC
+
+**Locations**
+
+- ID (UUID)
+- name
+- code
+- createdAtUTC
+- updatedAtUTC
+
+## Installation
+
+### 1. Clone Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/aayushsiwa/iot-asset-tracking
+cd iot-asset-tracking
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### 3. Configure Supabase
 
-## Learn More
+1. Create a Supabase project.
+2. Create schema `iot`.
+3. Create tables: `assets`, `locations`.
+4. Enable Row Level Security.
+5. Configure policies:
+   - SELECT for public
+   - INSERT/UPDATE/DELETE for authenticated
 
-To learn more about Next.js, take a look at the following resources:
+### 4. Add Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create `.env.local`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-## Deploy on Vercel
+### 5. Run Development Server
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Then open:
+
+```
+http://localhost:3000
+```
+
+## Project Structure
+
+```
+app/
+  api/
+  assets/
+  locations/
+components/
+hooks/
+lib/
+types/
+context/
+```
+
+- UI and logic separated
+- Custom hooks colocated with pages
+- Supabase client utilities isolated
+
+## Future Enhancements
+
+- Asset categories
+- Soft delete & archive
+- Asset activity logs
+- Role-based permissions
+- QR code asset tags
+- Realtime subscriptions
+- Bulk asset operations
+
+## Contributions
+
+Contributions are welcome!
+
+1. Fork repository
+2. Create feature branch
+3. Commit changes
+4. Submit pull request
+
+## License
+
+MIT License
+
+---
+
+## Author
+
+Built by Aayush Siwach
+
+GitHub: [https://github.com/aayushsiwa](https://github.com/aayushsiwa)
